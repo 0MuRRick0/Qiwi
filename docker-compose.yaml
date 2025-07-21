@@ -1,0 +1,167 @@
+services:
+
+  web-frontend:
+    build:
+      context: ./web_frontend
+      dockerfile: Dockerfile
+    container_name: web-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - nginx-proxy
+    networks:
+      - backend
+    environment:
+      - NODE_ENV=production
+
+  # --- Nginx File Cache Proxy ---
+  ftp-mirror-proxy:
+    build:
+      context: ./ftp-mirror-proxy
+      dockerfile: Dockerfile
+    container_name: ftp-mirror-proxy
+    expose:
+      - "8080"
+    env_file:
+      - ./envies/ftp.env
+    environment:
+      FTP_HOST: ftp-server
+      LOCAL_PATH: /usr/share/nginx/files
+      SYNC_INTERVAL: 300
+    depends_on:
+      - ftp-server
+    networks:
+      - backend
+
+  # --- Nginx Main Proxy ---
+  nginx-proxy:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    container_name: nginx-proxy
+    ports:
+      - "4242:80"
+    expose:
+      - "80"
+    volumes:
+      - ./media:/media
+    depends_on:
+      - user-service
+      - catalog-service
+      - file-service
+      - ftp-mirror-proxy
+    networks:
+      - backend
+
+  # --- API Server ---
+  catalog-service:
+    build:
+      context: ./catalog_service
+      dockerfile: Dockerfile
+    container_name: catalog-service
+    expose:
+      - "8000"
+    env_file:
+      - "./envies/jwtjango.env"
+    volumes:
+      - ./film_db:/app/database
+    environment:
+      - DJANGO_SETTINGS_MODULE=catalog_service.settings
+    networks:
+      - backend
+
+  # --- User Service ---
+  user-service:
+    build:
+      context: ./user_service
+      dockerfile: Dockerfile
+    container_name: user-service
+    expose:
+      - "8000"
+    environment:
+      - DJANGO_SETTINGS_MODULE=user_service.settings
+      - DJANGO_SUPERUSER_EMAIL=superuser@admin.ru
+      - DJANGO_SUPERUSER_USERNAME=superuser
+      - DJANGO_SUPERUSER_PASSWORD=superpassword
+    depends_on:
+      - rabbitmq
+    networks:
+      - backend
+
+  # --- FTP Service ---
+  ftp-server:
+    image: stilliard/pure-ftpd:hardened
+    container_name: ftp-server
+    ports:
+      - "21:21"
+      - "30000-30009:30000-30009"
+    env_file:
+      - ./envies/ftp.env
+    volumes:
+      - ftp_data:/home/myuser
+    networks:
+      - backend
+    restart: unless-stopped
+
+  # --- File Service ---
+  file-service:
+    build:
+      context: ./file_service
+      dockerfile: Dockerfile
+    container_name: file-service
+    expose:
+      - "8000"
+    env_file:
+      - ./envies/ftp.env
+      - ./envies/jwtjango.env
+      - ./envies/rabbit.env
+    depends_on:
+      - ftp-server
+      - rabbitmq
+    networks:
+      - backend
+
+  # # --- File API Gateway ---
+  # file_api_gateway:
+  #   build:
+  #     context: ./file_api_gateway
+  #     dockerfile: Dockerfile
+  #   container_name: file-api-gateway
+  #   expose:
+  #     - "8000"
+  #   networks:
+  #     - backend
+
+  # --- RabbitMQ ---
+  rabbitmq:
+    image: rabbitmq:4.1.2-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    env_file:
+      - ./envies/rabbit.env
+    networks:
+      - backend
+
+  video-transcoder:
+    build:
+      context: ./video-transcoder
+      dockerfile: Dockerfile
+    image: python:3.11
+    container_name: video-transcoder
+    env_file:
+      - ./envies/rabbit.env
+      - ./envies/ftp.env
+    depends_on:
+      - rabbitmq
+      - ftp-server
+    networks:
+      - backend
+  
+volumes:
+  ftp_data:
+  film_db:
+
+networks:
+  backend:
