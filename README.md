@@ -19,7 +19,7 @@
 Набросок схемы бэкенда:
 
 
-<img width="851" height="761" alt="735c0a8c-6e04-41e6-bd13-86d0d2ebcb01" src="https://github.com/user-attachments/assets/9dac771d-2504-44d3-a82e-8200bc954aa0" />
+<img width="851" height="761" alt="image" src="https://github.com/user-attachments/assets/39b3dc14-f67d-428e-afc3-2e964bd36099" />
 
 
 ## Возможности API бекенда, реализованные во фронтенде
@@ -46,6 +46,14 @@
 
 ### Api Gateway
 Был реализован для балансировки данных между различными файл серверами. Но так как я не нашел удобного health check для ftp серверов, данная идея была отложена ненадолго.
+
+P.S
+
+Для тестирования адмиских функций используйте следующего юзера
+
+Email: superuser@admin.ru
+
+Password: superpassword
 
 
 
