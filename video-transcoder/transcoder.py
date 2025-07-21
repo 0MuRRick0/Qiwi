@@ -20,6 +20,18 @@ def transcode_and_upload(movie_id, file_url, ftp_host, ftp_user, ftp_pass):
         if not ftp.path.exists(transcoded_dir):
             logging.info(f"Создаю папку: {transcoded_dir}")
             ftp.makedirs(transcoded_dir)
+        
+        ftp.chdir(transcoded_dir)
+
+        files = ftp.listdir(transcoded_dir)
+        
+        for file in files:
+            if file.endswith('.ts') or file.endswith('.m3u8'):
+                try:
+                    logging.info(f"Удаляю файл: {file}")
+                    ftp.remove(file)
+                except Exception as e:
+                    logging.error(f"Не удалось удалить файл {file}: {e}")
 
     secure_ftp_url = f"ftp://{ftp_user}:{ftp_pass}@{parsed_url.hostname}{parsed_url.path}"
     logging.info(f"Используем URL с авторизацией: {secure_ftp_url}")
