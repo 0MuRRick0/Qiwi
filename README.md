@@ -50,7 +50,9 @@
 P.S
 
 Для тестирования адмиских функций используйте следующего юзера
+
 Email: superuser@admin.ru
+
 Password: superpassword
 
 
