@@ -61,7 +61,6 @@ export const getCurrentUser = () => {
 export const logoutUser = () => {
   localStorage.removeItem('accessToken');
   localStorage.removeItem('refreshToken');
-  return apiClient.post('/auth/logout/');
 };
 
 export const getMovies = (page = 1, limit = 20) => {

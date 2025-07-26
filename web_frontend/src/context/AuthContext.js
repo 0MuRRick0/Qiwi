@@ -40,14 +40,8 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const logout = async () => {
-    try {
-      await logoutUser();
-    } finally {
-      localStorage.removeItem('accessToken');
-      localStorage.removeItem('refreshToken');
-      setUser(null);
-    }
+  const logout = () => {
+    logoutUser();
   };
 
   const checkAuth = async () => {
