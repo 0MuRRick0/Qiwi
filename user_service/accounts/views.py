@@ -21,6 +21,10 @@ class LoginView(APIView):
         user = serializer.validated_data
 
         refresh = RefreshToken.for_user(user)
+        refresh['email'] = user.email
+        refresh['username'] = user.username
+        refresh['user_id'] = user.id
+
         return Response({
             'refresh': str(refresh),
             'access': str(refresh.access_token),
@@ -64,6 +68,15 @@ class MeView(APIView):
             "id": user.id,
             "username": user.username,
             "email": user.email,
+            "is_staff": user.is_staff,
+            "is_superuser": user.is_superuser,
+        })
+
+class PrivilegesView(APIView):
+    permission_classes = [IsAuthenticated]
+    def get(self, request):
+        user = request.user
+        return Response({
             "is_staff": user.is_staff,
             "is_superuser": user.is_superuser,
         })
