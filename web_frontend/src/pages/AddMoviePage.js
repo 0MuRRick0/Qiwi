@@ -1,178 +1,143 @@
+// src\pages\AddMoviePage.js
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { createMovie, getAllGenres } from '../services/api';
+import { createMovie, getAllGenres, createGenre } from '../services/api';
 import GenreManagement from '../components/GenreManagement';
-import styles from '../index.css';
 
 function AddMoviePage() {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, fetchUserPrivileges } = useAuth();
   const [formData, setFormData] = useState({
     title: '',
+    description: '',
     release_date: '',
     genres: []
   });
-  const [availableGenres, setAvailableGenres] = useState([]);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isLoadingGenres, setIsLoadingGenres] = useState(true);
+  const [loading, setLoading] = useState(false);
 
- 
-  const isAdmin = user?.is_staff || user?.data?.is_staff;
+  // Локальное состояние для привилегий
+  const [isStaff, setIsStaff] = useState(false);
+  const [checkingPrivileges, setCheckingPrivileges] = useState(true);
 
- 
+  // Эффект для проверки привилегий
   useEffect(() => {
-    if (!isAdmin) return;
-
-    const loadGenres = async () => {
-      try {
-        const response = await getAllGenres();
-        console.log('Raw genres response:', response);
-        
-       
-        const genresData = Array.isArray(response) ? response : (response.data || []);
-        
-       
-        const validGenres = genresData.filter(genre => 
-          genre && genre.name && genre.name.trim() !== ''
-        );
-        
-        console.log('Filtered genres:', validGenres);
-        setAvailableGenres(validGenres);
-      } catch (error) {
-        console.error('Failed to load genres:', error);
-        setError('Failed to load genres. Please try again later.');
-        setAvailableGenres([]);
-      } finally {
-        setIsLoadingGenres(false);
+    // console.log("AddMoviePage: Privileges useEffect triggered", { user }); // Для отладки
+    const checkPrivileges = async () => {
+      setCheckingPrivileges(true);
+      if (user) {
+        try {
+          // console.log("AddMoviePage: Fetching privileges..."); // Для отладки
+          const privileges = await fetchUserPrivileges();
+          // console.log("AddMoviePage: Privileges fetched:", privileges); // Для отладки
+          setIsStaff(!!privileges.is_staff);
+        } catch (err) {
+          console.error("AddMoviePage: Failed to fetch privileges:", err);
+          setIsStaff(false);
+        }
+      } else {
+        setIsStaff(false);
       }
+      setCheckingPrivileges(false);
     };
-    
-    loadGenres();
-  }, [isAdmin]);
 
-  if (!isAdmin) {
+    checkPrivileges();
+    // Зависимости должны быть стабильны
+  }, [user, fetchUserPrivileges]); // <-- Эти зависимости теперь стабильны
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!isStaff) {
+      setError('У вас нет прав для добавления фильмов.');
+      return;
+    }
+    setLoading(true);
+    setError('');
+    setSuccess(false);
+    try {
+      await createMovie(formData);
+      setSuccess(true);
+      setFormData({ title: '', description: '', release_date: '', genres: [] });
+    } catch (err) {
+      setError(err.response?.data?.message || 'Ошибка при добавлении фильма');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Показываем индикатор загрузки, если проверяются привилегии
+  if (checkingPrivileges) return <div className="loading">Проверка прав доступа...</div>;
+
+  // Если пользователь не аутентифицирован или не админ, показываем ошибку
+  if (!user || !isStaff) {
     return (
-      <div className="error">
-        <p>Only admin users can add movies</p>
-        <button onClick={() => navigate('/')}>Return to Home</button>
+      <div className="admin-error">
+        <h2>Доступ запрещен</h2>
+        <p>У вас нет прав для просмотра этой страницы.</p>
       </div>
     );
   }
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (isSubmitting || isLoadingGenres) return;
-    
-    setError('');
-    setIsSubmitting(true);
-
-    try {
-      const genreIds = formData.genres
-        .map(genreName => {
-          const genre = availableGenres.find(g => g.name === genreName);
-          return genre?.id;
-        })
-        .filter(id => id !== undefined);
-
-      if (genreIds.length === 0) {
-        throw new Error('Please select at least one genre');
-      }
-
-      await createMovie({
-        title: formData.title,
-        release_date: formData.release_date,
-        genres: genreIds
-      });
-
-      setSuccess(true);
-      setTimeout(() => navigate('/'), 2000);
-    } catch (error) {
-      setError(error.response?.data?.message || error.message || 'Failed to create movie');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleGenreChange = (e) => {
-    const selectedOptions = Array.from(e.target.selectedOptions);
-    setFormData({
-      ...formData,
-      genres: selectedOptions.map(option => option.value)
-    });
-  };
-
-  if (isLoadingGenres) {
-    return <div className="loading">Loading genres...</div>;
-  }
-
   return (
     <div className="form-page">
-      <h2>Add New Movie</h2>
-      {error && <div className="error">{error}</div>}
-      {success && <div className="success">Movie created successfully!</div>}
+      <h2>Добавить новый фильм</h2>
+      {error && <div className="error-message">{error}</div>}
+      {success && <div className="success-message">Фильм успешно добавлен!</div>}
       
       <form onSubmit={handleSubmit}>
         <div className="form-group">
-          <label>Title</label>
+          <label htmlFor="title">Название:</label>
           <input
             type="text"
+            id="title"
+            name="title"
             value={formData.title}
-            onChange={(e) => setFormData({...formData, title: e.target.value})}
+            onChange={handleChange}
             required
-          />
-        </div>
-
-        <div className="form-group">
-          <label>Release Date</label>
-          <input
-            type="date"
-            value={formData.release_date}
-            onChange={(e) => setFormData({...formData, release_date: e.target.value})}
           />
         </div>
         
         <div className="form-group">
-          <label>Genres*</label>
-          {availableGenres.length > 0 ? (
-            <>
-              <select
-                multiple
-                value={formData.genres}
-                onChange={handleGenreChange}
-                required
-                size={Math.min(availableGenres.length, 5)}
-                disabled={isSubmitting}
-              >
-                {availableGenres.map(genre => (
-                  <option key={genre.id} value={genre.name}>
-                    {genre.name}
-                  </option>
-                ))}
-              </select>
-              <small>Hold CTRL/CMD to select multiple genres</small>
-            </>
-          ) : (
-            <p className="error">No genres available. Please contact administrator.</p>
-          )}
+          <label htmlFor="description">Описание:</label>
+          <textarea
+            id="description"
+            name="description"
+            value={formData.description}
+            onChange={handleChange}
+            rows="4"
+            required
+          />
         </div>
-
-        <button 
-          type="submit" 
-          disabled={isSubmitting || availableGenres.length === 0}
-        >
-          {isSubmitting ? 'Creating...' : 'Create Movie'}
+        
+        <div className="form-group">
+          <label htmlFor="release_date">Дата выхода:</label>
+          <input
+            type="datetime-local"
+            id="release_date"
+            name="release_date"
+            value={formData.release_date}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        
+        <button type="submit" className="submit-button" disabled={loading}>
+          {loading ? 'Добавление...' : 'Добавить фильм'}
         </button>
       </form>
 
-      {user?.data?.is_staff && (
-        <div className="admin-section">
-          <h3>Admin Tools</h3>
-          <GenreManagement />
-        </div>
-      )}
+      {/* Используем локальное состояние isStaff для условного рендеринга GenreManagement */}
+      {isStaff && <GenreManagement />}
     </div>
   );
 }
