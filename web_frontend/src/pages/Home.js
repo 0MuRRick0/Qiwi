@@ -3,14 +3,36 @@ import { useAuth } from '../context/AuthContext';
 import { getMovies } from '../services/api';
 import MovieList from '../components/MovieList';
 import { Link } from 'react-router-dom';
-import styles from '../index.css';
 
 function Home() {
   const [movies, setMovies] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const { user } = useAuth();
+  const [isStaff, setIsStaff] = useState(false);
+  const [checkingPrivileges, setCheckingPrivileges] = useState(true);
+  const { user, fetchUserPrivileges } = useAuth();
   
+  
+  useEffect(() => {
+    const checkPrivileges = async () => {
+      setCheckingPrivileges(true);
+      if (user) {
+        try {
+          const privileges = await fetchUserPrivileges();
+          setIsStaff(!!privileges?.is_staff);
+        } catch (err) {
+          console.error("Home: Failed to fetch privileges:", err);
+          setIsStaff(false);
+        }
+      } else {
+        setIsStaff(false);
+      }
+      setCheckingPrivileges(false);
+    };
+
+    checkPrivileges();
+  }, [user, fetchUserPrivileges]);
+
   useEffect(() => {
     const fetchMovies = async () => {
       if (!user) {
@@ -33,10 +55,14 @@ function Home() {
       }
     };
 
-    fetchMovies();
-  }, [user]);
+    
+    if (!checkingPrivileges) {
+      fetchMovies();
+    }
+  }, [user, checkingPrivileges]); 
 
-  if (loading && movies === null) {
+  
+  if (checkingPrivileges || (loading && movies === null)) {
     return <div className="loading">Loading movies...</div>;
   }
 
@@ -48,7 +74,7 @@ function Home() {
     <div className="home-page">
       <div className="home-header">
         <h1>Popular Movies</h1>
-        {user?.data?.is_staff && (
+        {isStaff && ( 
           <Link to="/movies/add" className="add-movie-button">
             Add Movie
           </Link>

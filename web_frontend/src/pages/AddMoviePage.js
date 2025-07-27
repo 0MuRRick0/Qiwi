@@ -1,8 +1,8 @@
-// src\pages\AddMoviePage.js
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { createMovie, getAllGenres, createGenre } from '../services/api';
+import { createMovie, getAllGenres } from '../services/api'; 
 import GenreManagement from '../components/GenreManagement';
 
 function AddMoviePage() {
@@ -10,29 +10,30 @@ function AddMoviePage() {
   const { user, fetchUserPrivileges } = useAuth();
   const [formData, setFormData] = useState({
     title: '',
-    description: '',
-    release_date: '',
-    genres: []
+    
+    release_date: '', 
+    genres: [] 
   });
+  
+  
+  const [availableGenres, setAvailableGenres] = useState([]); 
+  const [loadingGenres, setLoadingGenres] = useState(false); 
+  const [errorGenres, setErrorGenres] = useState(''); 
+
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
-
-  // Локальное состояние для привилегий
   const [isStaff, setIsStaff] = useState(false);
   const [checkingPrivileges, setCheckingPrivileges] = useState(true);
 
-  // Эффект для проверки привилегий
+  
   useEffect(() => {
-    // console.log("AddMoviePage: Privileges useEffect triggered", { user }); // Для отладки
     const checkPrivileges = async () => {
       setCheckingPrivileges(true);
       if (user) {
         try {
-          // console.log("AddMoviePage: Fetching privileges..."); // Для отладки
           const privileges = await fetchUserPrivileges();
-          // console.log("AddMoviePage: Privileges fetched:", privileges); // Для отладки
-          setIsStaff(!!privileges.is_staff);
+          setIsStaff(!!privileges?.is_staff); 
         } catch (err) {
           console.error("AddMoviePage: Failed to fetch privileges:", err);
           setIsStaff(false);
@@ -42,10 +43,30 @@ function AddMoviePage() {
       }
       setCheckingPrivileges(false);
     };
-
     checkPrivileges();
-    // Зависимости должны быть стабильны
-  }, [user, fetchUserPrivileges]); // <-- Эти зависимости теперь стабильны
+  }, [user, fetchUserPrivileges]); 
+
+  
+  useEffect(() => {
+    const loadGenres = async () => {
+      if (!isStaff) return; 
+      setLoadingGenres(true);
+      setErrorGenres('');
+      try {
+        const response = await getAllGenres();
+        
+        setAvailableGenres(Array.isArray(response.data) ? response.data : []);
+      } catch (err) {
+        console.error("Ошибка загрузки жанров:", err);
+        setErrorGenres('Не удалось загрузить список жанров.');
+        setAvailableGenres([]); 
+      } finally {
+        setLoadingGenres(false);
+      }
+    };
+
+    loadGenres();
+  }, [isStaff]); 
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -53,6 +74,22 @@ function AddMoviePage() {
       ...prev,
       [name]: value
     }));
+  };
+
+  
+  const handleGenreChange = (e) => {
+    const selectedOptions = Array.from(e.target.selectedOptions, option => parseInt(option.value, 10));
+    setFormData(prev => ({
+      ...prev,
+      genres: selectedOptions
+    }));
+  };
+
+  
+  const handleGenreAdded = (newGenre) => {
+    
+    setAvailableGenres(prevGenres => [...prevGenres, newGenre]);
+    
   };
 
   const handleSubmit = async (e) => {
@@ -65,20 +102,61 @@ function AddMoviePage() {
     setError('');
     setSuccess(false);
     try {
-      await createMovie(formData);
+      
+      
+      let formattedDate = formData.release_date;
+      if (formattedDate && formattedDate.includes('T')) {
+         
+         formattedDate = formData.release_date.split('T')[0];
+      }
+      
+      const movieDataToSend = {
+        title: formData.title,
+        release_date: formattedDate, 
+        genres: formData.genres 
+      };
+
+      await createMovie(movieDataToSend); 
       setSuccess(true);
-      setFormData({ title: '', description: '', release_date: '', genres: [] });
+      
+      setFormData({ title: '', release_date: '', genres: [] }); 
     } catch (err) {
-      setError(err.response?.data?.message || 'Ошибка при добавлении фильма');
+      console.error("Ошибка добавления фильма:", err);
+      
+      if (err.response) {
+        
+        if (err.response.data) {
+            
+            const fieldErrors = [];
+            for (const [field, messages] of Object.entries(err.response.data)) {
+                if (Array.isArray(messages)) {
+                   fieldErrors.push(`${field}: ${messages.join(', ')}`);
+                } else if (typeof messages === 'string') {
+                   fieldErrors.push(`${field}: ${messages}`);
+                }
+            }
+            if (fieldErrors.length > 0) {
+                setError(fieldErrors.join('; '));
+            } else {
+                
+                setError(err.response?.data?.detail || 'Ошибка при добавлении фильма');
+            }
+        } else {
+            setError('Ошибка при добавлении фильма');
+        }
+      } else if (err.request) {
+        
+        setError('Нет ответа от сервера. Проверьте соединение.');
+      } else {
+        
+        setError('Ошибка запроса: ' + err.message);
+      }
     } finally {
       setLoading(false);
     }
   };
 
-  // Показываем индикатор загрузки, если проверяются привилегии
   if (checkingPrivileges) return <div className="loading">Проверка прав доступа...</div>;
-
-  // Если пользователь не аутентифицирован или не админ, показываем ошибку
   if (!user || !isStaff) {
     return (
       <div className="admin-error">
@@ -93,51 +171,68 @@ function AddMoviePage() {
       <h2>Добавить новый фильм</h2>
       {error && <div className="error-message">{error}</div>}
       {success && <div className="success-message">Фильм успешно добавлен!</div>}
-      
+
       <form onSubmit={handleSubmit}>
         <div className="form-group">
-          <label htmlFor="title">Название:</label>
+          <label htmlFor="movie-title">Название:</label>
           <input
+            id="movie-title"
             type="text"
-            id="title"
             name="title"
             value={formData.title}
             onChange={handleChange}
             required
           />
         </div>
-        
+
         <div className="form-group">
-          <label htmlFor="description">Описание:</label>
-          <textarea
-            id="description"
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-            rows="4"
-            required
-          />
-        </div>
-        
-        <div className="form-group">
-          <label htmlFor="release_date">Дата выхода:</label>
+          <label htmlFor="movie-release-date">Дата выхода:</label>
           <input
-            type="datetime-local"
-            id="release_date"
+            id="movie-release-date"
+            type="date"
             name="release_date"
             value={formData.release_date}
             onChange={handleChange}
             required
           />
         </div>
-        
+
+        <div className="form-group">
+          <label htmlFor="movie-genres">Жанры:</label>
+          {loadingGenres ? (
+            <p>Загрузка жанров...</p>
+          ) : errorGenres ? (
+            <p className="error-message">{errorGenres}</p>
+          ) : (
+            <>
+            <select
+              id="movie-genres"
+              multiple
+              value={formData.genres.map(String)}
+              onChange={handleGenreChange}
+              className="genre-select"
+            >
+              {availableGenres.map(genre => (
+                <option key={genre.id} value={genre.id}>
+                  {genre.name}
+                </option>
+              ))}
+            </select>
+            <small>Удерживайте Ctrl (Cmd на Mac) для выбора нескольких жанров.</small>
+            </>
+          )}
+        </div>
+
         <button type="submit" className="submit-button" disabled={loading}>
           {loading ? 'Добавление...' : 'Добавить фильм'}
         </button>
       </form>
 
-      {/* Используем локальное состояние isStaff для условного рендеринга GenreManagement */}
-      {isStaff && <GenreManagement />}
+      {}
+      <div className="admin-section">
+        <h3>Управление жанрами</h3>
+        <GenreManagement onGenreAdded={handleGenreAdded} />
+      </div>
     </div>
   );
 }

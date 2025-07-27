@@ -9,6 +9,7 @@ from datetime import date
 from .models import Movie, Genre
 from .serializers import MovieListSerializer, MovieDetailSerializer, MovieCreateSerializer, GenreSerializer
 from catalog_service.auth_backends import ExternalJWTAuthentication
+from catalog_service.permissions import IsAdminOrSuperUser
 
 # GET /api/movies
 class MovieListView(generics.ListAPIView):
@@ -81,12 +82,12 @@ class LatestMoviesView(generics.ListAPIView):
     def get_queryset(self):
         return Movie.objects.order_by('-created_at')[:10]
 
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAdminOrSuperUser])
 class MovieCreateView(generics.CreateAPIView):
     serializer_class = MovieCreateSerializer
     queryset = Movie.objects.all()
 
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAdminOrSuperUser])
 class GenreCreateView(generics.CreateAPIView):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer

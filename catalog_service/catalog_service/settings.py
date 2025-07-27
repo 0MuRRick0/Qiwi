@@ -22,12 +22,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'backup_no_so_secret_key_@342FD-sfd_32q##424%234##33(32432@&^hvdr')
+JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY', 'backup_no_so_secret_key_@342FD-sfd_32q##424%234##33(32432@&^hvdr')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
+USER_SERVICE_PRIVILEGES_URL = "http://user-service:8000/privileges/"
+
+USER_SERVICE_TIMEOUT = 10
 
 # Application definition
 
@@ -46,7 +50,7 @@ REST_FRAMEWORK = {
         'catalog_service.auth_backends.ExternalJWTAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated',
+        #NONE
     )
 }
 

@@ -97,7 +97,7 @@ export const registerUser = (email, username, password, password2) => {
 
 export const getUserPrivileges = () => {
   console.log("API: Fetching user privileges"); 
-  return apiClient.get('/auth/priveleges/');
+  return apiClient.get('/auth/privileges/');
 };
 
 export const logoutUser = () => {

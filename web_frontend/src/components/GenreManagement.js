@@ -1,9 +1,9 @@
+
 import React, { useState } from 'react';
-import { useAuth } from '../context/AuthContext';
+
 import { createGenre } from '../services/api';
 
-function GenreManagement() {
-  const { user } = useAuth();
+function GenreManagement({ onGenreAdded }) {
   const [genreName, setGenreName] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -18,34 +18,43 @@ function GenreManagement() {
       const response = await createGenre({ name: genreName });
       console.log('Genre created:', response.data);
       setSuccess(`Жанр "${genreName}" успешно добавлен!`);
-      setGenreName('');
+      
+      
+      if (onGenreAdded) {
+        onGenreAdded(response.data); 
+      }
+      
+      setGenreName(''); 
     } catch (err) {
       console.error('Error creating genre:', err);
-      setError(err.response?.data?.name?.[0] || 
-               err.response?.data?.detail || 
-               'Ошибка при добавлении жанра');
+      
+      if (err.response) {
+        
+        setError(err.response?.data?.name?.[0] || 
+                 err.response?.data?.detail || 
+                 'Ошибка при добавлении жанра');
+      } else if (err.request) {
+        
+        setError('Нет ответа от сервера. Проверьте соединение.');
+      } else {
+        
+        setError('Ошибка запроса: ' + err.message);
+      }
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  if (!user?.data?.is_staff) {
-    return (
-      <div className="error">
-        <p>Только администраторы могут добавлять жанры</p>
-      </div>
-    );
-  }
-
   return (
-    <div className="form-page">
+    <div className="genre-management">
       <h2>Добавить новый жанр</h2>
-      {error && <div className="error">{error}</div>}
-      {success && <div className="success">{success}</div>}
+      {error && <div className="error-message">{error}</div>}
+      {success && <div className="success-message">{success}</div>}
       <form onSubmit={handleSubmit}>
         <div className="form-group">
-          <label>Название жанра:</label>
+          <label htmlFor="genre-name">Название жанра:</label>
           <input
+            id="genre-name"
             type="text"
             value={genreName}
             onChange={(e) => setGenreName(e.target.value)}
@@ -55,6 +64,7 @@ function GenreManagement() {
         </div>
         <button 
           type="submit" 
+          className="submit-button"
           disabled={isSubmitting || !genreName.trim()}
         >
           {isSubmitting ? 'Добавляем...' : 'Добавить жанр'}
