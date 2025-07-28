@@ -13,6 +13,7 @@ from urllib.parse import urlparse
 import ftputil
 from ftplib import FTP
 from server import settings
+from server.permissions import IsAdminOrSuperUser
 
 def send_to_rabbitmq(movie_id, file_url):
     ftp_user = settings.FTP_SERVER_USER
@@ -43,7 +44,7 @@ def send_to_rabbitmq(movie_id, file_url):
     except Exception as e:
         print(f"Ошибка при отправке в RabbitMQ: {e}")
 
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAdminOrSuperUser])
 class UploadFileView(APIView):
 
     FILE_MAP = {
