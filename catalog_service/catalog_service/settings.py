@@ -69,10 +69,15 @@ WSGI_APPLICATION = 'catalog_service.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'database' / 'db.sqlite3'
+        'ENGINE': os.getenv('DB_ENGINE', ''),
+        'NAME': os.getenv('DB_NAME', ''), 
+        'USER': os.getenv('POSTGRES_USER', ''),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD', ''),
+        'HOST': os.getenv('DB_HOST', ''),
+        'PORT': os.getenv('DB_PORT', ''),
     }
 }
+
 
 
 # Password validation

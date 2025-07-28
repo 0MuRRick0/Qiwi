@@ -2,3 +2,4 @@
 __pycache__
 *.sqlite3
 custom_cat*
+*test*
