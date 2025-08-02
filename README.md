@@ -20,7 +20,7 @@
 Набросок схемы бэкенда:
 
 
-<img width="851" height="761" alt="image" src="https://github.com/user-attachments/assets/39b3dc14-f67d-428e-afc3-2e964bd36099" />
+![Backend](https://github.com/user-attachments/assets/3a5d0904-e165-4e6b-9dae-71c618303459)
 
 
 ## Возможности API бекенда, реализованные во фронтенде
