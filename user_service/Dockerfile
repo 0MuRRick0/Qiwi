@@ -7,4 +7,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-CMD ["sh", "-c", "python manage.py migrate --noinput && python create_superuser.py && gunicorn --bind 0.0.0.0:8000 user_service.wsgi:application"]
+CMD ["sh", "-c", "python manage.py makemigrations && python manage.py migrate --noinput && python create_superuser.py && gunicorn --bind 0.0.0.0:8000 user_service.wsgi:application"]

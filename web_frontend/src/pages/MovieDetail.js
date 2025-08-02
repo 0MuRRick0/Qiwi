@@ -107,6 +107,9 @@ function MovieDetail() {
             <Link to={`/movies/${id}/upload`} className="admin-button">
               Загрузить файлы
             </Link>
+            <Link to={`/movies/${id}/edit`} className="admin-button">
+              Редактировать фильм
+            </Link>
           </div>
         )}
       </div>

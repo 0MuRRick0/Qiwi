@@ -141,3 +141,49 @@ export const getAllGenres = () => {
   return apiClient.get('/catalog/genres/');
 };
 
+
+
+export const deleteMovie = (movieId) => {
+  return apiClient.delete(`/catalog/movies/${movieId}/delete/`);
+};
+
+export const updateMovie = (movieId, movieData) => {
+  let formattedData = { ...movieData };
+  if (formattedData.release_date && typeof formattedData.release_date === 'string' && formattedData.release_date.includes('T')) {
+    formattedData.release_date = formattedData.release_date.split('T')[0];
+  }
+  return apiClient.put(`/catalog/movies/${movieId}/update/`, formattedData);
+};
+
+export const deleteFile = (movieId, fileType) => {
+  return apiClient.delete(`/file/delete/${movieId}/${fileType}/`);
+};
+
+export const deleteAllFiles = (movieId) => {
+  return apiClient.delete(`/file/delete/${movieId}/`);
+};
+
+export const deleteGenre = async (genreId) => {
+  const token = localStorage.getItem('accessToken');
+  if (!token) {
+    throw new Error('No access token found');
+  }
+  const response = await fetch(`${API_BASE}/api/catalog/genres/${genreId}/delete/`, {
+    method: 'DELETE',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+  });
+
+  if (!response.ok) {
+    let errorMsg = 'Ошибка при удалении жанра';
+    try {
+      const errorData = await response.json();
+      errorMsg = errorData.detail || errorMsg;
+    } catch (e) {
+    }
+    throw new Error(errorMsg);
+  }
+  return { message: 'Жанр успешно удален' };
+};

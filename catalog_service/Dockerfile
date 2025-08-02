@@ -7,4 +7,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-CMD ["sh", "-c", "python manage.py makemigrations && python manage.py migrate --noinput && gunicorn --bind 0.0.0.0:8000 catalog_service.wsgi:application"]
+CMD ["sh", "-c", "python manage.py makemigrations api && python manage.py migrate --noinput && gunicorn --bind 0.0.0.0:8000 catalog_service.wsgi:application"]

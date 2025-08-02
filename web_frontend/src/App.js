@@ -10,6 +10,7 @@ import MovieDetail from './pages/MovieDetail';
 import Player from './pages/Player';
 import AddMoviePage from './pages/AddMoviePage';
 import UploadMovieFiles from './pages/UploadMovieFiles';
+import AdminEditMovie from './pages/AdminEditMovie';
 
 function App() {
   return (
@@ -48,6 +49,12 @@ function App() {
             <Route path="/movies/:movieId/upload" element={
               <ProtectedRoute>
                 <UploadMovieFiles />
+              </ProtectedRoute>
+            } />
+            
+            <Route path="/movies/:movieId/edit" element={
+              <ProtectedRoute>
+                <AdminEditMovie />
               </ProtectedRoute>
             } />
             

@@ -16,11 +16,13 @@ Including another URLconf
 """
 
 from django.urls import path
-from uploader.views import UploadFileView
+from uploader.views import UploadFileView, DeleteFileView, DeleteAllMovieFilesView
 from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
     path('upload/<int:movie_id>/<str:content_type>/', UploadFileView.as_view(), name='upload'),
+    path('delete/<int:movie_id>/<str:content_type>/', DeleteFileView.as_view(), name='delete'),
+    path('delete/<int:movie_id>/', DeleteAllMovieFilesView.as_view(), name='delete-all'),
     # path('health/', health, name='health'),
 ]

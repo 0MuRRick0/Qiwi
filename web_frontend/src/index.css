@@ -141,7 +141,7 @@ body {
   font-size: 1.1rem;
 }
 
-/* Формы */
+
 .form-page, .upload-page {
   max-width: 600px;
   margin: 20px auto;
@@ -171,7 +171,7 @@ body {
   border-radius: 4px;
 }
 
-/* Прогресс бар */
+
 .progress-bar {
   height: 20px;
   background: #333;
@@ -189,7 +189,7 @@ body {
   line-height: 20px;
 }
 
-/* Кнопки админа */
+
 .admin-actions {
   margin-top: 20px;
   padding-top: 20px;
@@ -210,7 +210,7 @@ body {
   background: #148f3d;
 }
 
-/* Movie Detail Styles */
+
 .movie-detail-container {
   max-width: 1200px;
   margin: 0 auto;
@@ -307,7 +307,7 @@ body {
   background: #b2070f;
 }
 
-/* Files Tab Styles */
+
 .movie-files {
   margin-top: 20px;
 }
@@ -353,7 +353,7 @@ body {
   background: #148f3d;
 }
 
-/* Добавьте эти стили в ваш index.css */
+
 
 .trailer-section {
   margin-top: 40px;
@@ -559,7 +559,7 @@ body {
   color: #ff5555;
 }
 
-/* Добавьте в ваш файл стилей */
+
 .genre-management {
   max-width: 600px;
   margin: 30px auto;
@@ -775,7 +775,7 @@ body {
   font-size: 1.1rem;
 }
 
-/* Формы */
+
 .form-page, .upload-page {
   max-width: 600px;
   margin: 20px auto;
@@ -805,7 +805,7 @@ body {
   border-radius: 4px;
 }
 
-/* Прогресс бар */
+
 .progress-bar {
   height: 20px;
   background: #333;
@@ -823,7 +823,7 @@ body {
   line-height: 20px;
 }
 
-/* Кнопки админа */
+
 .admin-actions {
   margin-top: 20px;
   padding-top: 20px;
@@ -844,7 +844,7 @@ body {
   background: #148f3d;
 }
 
-/* Movie Detail Styles */
+
 .movie-detail-container {
   max-width: 1200px;
   margin: 0 auto;
@@ -941,7 +941,7 @@ body {
   background: #b2070f;
 }
 
-/* Files Tab Styles */
+
 .movie-files {
   margin-top: 20px;
 }
@@ -987,7 +987,7 @@ body {
   background: #148f3d;
 }
 
-/* Добавьте эти стили в ваш index.css */
+
 .trailer-section {
   margin-top: 40px;
   padding: 20px;
@@ -1190,7 +1190,7 @@ body {
   color: #ff5555;
 }
 
-/* Добавьте в ваш файл стилей */
+
 .genre-management {
   max-width: 600px;
   margin: 30px auto;
@@ -1253,7 +1253,7 @@ body {
   color: #ff5555;
 }
 
-/* Дополнительные стили для MovieDetail */
+
 .movie-detail-container {
   background: #1a1a1a;
   padding: 20px;
@@ -1598,4 +1598,285 @@ body {
 
 .add-movie-button:hover {
   background-color: #45a049;
+}
+
+
+
+
+.admin-edit-movie-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  color: #fff;
+}
+
+.admin-edit-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #333;
+}
+
+.admin-edit-header h1 {
+  margin: 0;
+  color: #fff;
+}
+
+.back-button {
+  padding: 8px 15px;
+  background: #6c757d;
+  color: white;
+  text-decoration: none;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  transition: background 0.3s;
+}
+
+.back-button:hover {
+  background: #5a6268;
+}
+
+.admin-error, .error-message, .success-message {
+  padding: 15px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.admin-error, .error-message {
+  background: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+.success-message {
+  background: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.loading, .empty {
+  text-align: center;
+  padding: 50px;
+  font-size: 1.2rem;
+}
+
+.loading {
+  color: #aaa;
+}
+
+.empty {
+  color: #888;
+}
+
+.admin-edit-content {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.edit-section, .files-section, .danger-zone {
+  background: #1a1a1a;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.edit-section h2, .files-section h2, .danger-zone h2 {
+  margin-top: 0;
+  color: #fff;
+  border-bottom: 1px solid #333;
+  padding-bottom: 10px;
+}
+
+
+.edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  padding: 10px;
+  border: 1px solid #333;
+  border-radius: 4px;
+  background: #2d2d2d;
+  color: #fff;
+  font-size: 1rem;
+}
+
+.form-group select[multiple] {
+  height: 150px;
+}
+
+.form-group small {
+  margin-top: 5px;
+  color: #aaa;
+  font-size: 0.85rem;
+}
+
+.submit-button {
+  padding: 12px 20px;
+  background: #1db954;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s;
+  align-self: flex-start;
+}
+
+.submit-button:hover:not(:disabled) {
+  background: #148f3d;
+}
+
+.submit-button:disabled {
+  background: #5a6268;
+  cursor: not-allowed;
+}
+
+
+.file-management-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.file-management-card {
+  background: #2d2d2d;
+  padding: 15px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.file-management-card h3 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  color: #fff;
+}
+
+.file-preview {
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 15px;
+  background: #1a1a1a;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.file-preview img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: cover;
+}
+
+.file-placeholder {
+  color: #888;
+  font-style: italic;
+}
+
+.file-icon {
+  font-size: 4rem;
+}
+
+.file-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.upload-button, .delete-button {
+  padding: 8px 12px;
+  text-decoration: none;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.3s;
+  display: block;
+  text-align: center;
+}
+
+.upload-button {
+  background: #1db954;
+  color: white;
+  border: none;
+}
+
+.upload-button:hover {
+  background: #148f3d;
+}
+
+.delete-button {
+  background: #dc3545;
+  color: white;
+  border: none;
+}
+
+.delete-button:hover:not(:disabled) {
+  background: #c82333;
+}
+
+.delete-button:disabled {
+  background: #6c757d;
+  cursor: not-allowed;
+}
+
+
+.danger-zone {
+  border: 1px solid #dc3545;
+}
+
+.danger-zone p {
+  color: #aaa;
+  margin-bottom: 15px;
+}
+
+.delete-movie-button {
+  padding: 12px 20px;
+  background: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.delete-movie-button:hover:not(:disabled) {
+  background: #c82333;
+}
+
+.delete-movie-button:disabled {
+  background: #6c757d;
+  cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+  .admin-edit-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  
+  .file-management-grid {
+    grid-template-columns: 1fr;
+  }
 }
