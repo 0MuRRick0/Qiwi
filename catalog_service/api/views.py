@@ -105,3 +105,34 @@ class GenreDetailView(generics.RetrieveAPIView):
     def get_queryset(self):
         name = self.kwargs.get('name')
         return Genre.objects.filter(name__iexact=name)
+    
+
+@permission_classes([IsAdminOrSuperUser])
+class MovieDeleteView(generics.DestroyAPIView):
+    queryset = Movie.objects.all()
+    lookup_field = 'id'
+
+@permission_classes([IsAdminOrSuperUser])
+class MovieUpdateView(generics.UpdateAPIView):
+    queryset = Movie.objects.all()
+    serializer_class = MovieCreateSerializer 
+    lookup_field = 'id'
+
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        if getattr(instance, '_prefetched_objects_cache', None):
+            instance._prefetched_objects_cache = {}
+
+        return Response(serializer.data)
+
+@permission_classes([IsAdminOrSuperUser])
+class GenreDeleteView(generics.DestroyAPIView):
+    queryset = Genre.objects.all()
+    lookup_field = 'id'
+
+
