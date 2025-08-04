@@ -25,11 +25,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 
 
-SECRET_KEY = 'backup_no_so_secret_key_@342FD-sfd_32q##424%234##33(32432@&^hvdr'
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'backup_no_so_secret_key_@342FD-sfd_32q##424%234##33(32432@&^hvdr')
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -74,7 +74,7 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    'SIGNING_KEY': os.getenv('JWT_SECRET_KEY', 'memekeyforiviguys'), 
+    'SIGNING_KEY': os.getenv('JWT_SECRET_KEY', 'backup_no_so_secret_key_@342FD-sfd_32q##424%234##33(32432@&^hvdr'), 
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
     'ROTATE_REFRESH_TOKENS': True,
