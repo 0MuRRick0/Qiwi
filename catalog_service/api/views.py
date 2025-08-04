@@ -37,9 +37,10 @@ class MoviePagination(PageNumberPagination):
 class MovieListView(generics.ListAPIView):
     serializer_class = MovieListSerializer
     pagination_class = MoviePagination
-
+    queryset = Movie.objects.all()
+    
     def get_queryset(self):
-        queryset = Movie.objects.all().order_by("-created_at")
+        queryset = super().get_queryset().order_by("-created_at")
         
         search_query = self.request.query_params.get("search", None)
         genre_names = self.request.query_params.getlist("genres", [])
@@ -118,17 +119,4 @@ class MovieUpdateView(generics.UpdateAPIView):
     queryset = Movie.objects.all()
     serializer_class = MovieCreateSerializer
     lookup_field = "id"
-
-    def update(self, request, *args, **kwargs):
-        partial = kwargs.pop("partial", False)
-        instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=partial)
-        serializer.is_valid(raise_exception=True)
-        self.perform_update(serializer)
-
-        if getattr(instance, "_prefetched_objects_cache", None):
-            instance._prefetched_objects_cache = {}
-
-        return Response(serializer.data)
-
 
