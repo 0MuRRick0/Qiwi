@@ -33,7 +33,7 @@
  - [x] Просмотр фильмов используя HLS. Допускается изменения разрешения пользователем, а также автоматический подбор разрешения.
  - [x] JWT авторизация 
  - [x] Просмотр каталога фильмов
- - [ ]  Сортировка по различным критериям (не хватило времени реализовать во фронте, есть на беке)
+ - [x]  Сортировка по различным критериям
 
 ## Технологии примененные на бекенде ( о которых рассказывалось на стажировке)
 ### Брокер сообщений:
@@ -55,6 +55,41 @@ P.S
 Email: superuser@admin.ru
 
 Password: superpassword
+
+
+# Превью
+
+## Главная страница (вид от лица админа)
+
+<img width="1831" height="996" alt="image" src="https://github.com/user-attachments/assets/c907b643-4294-4a8e-b7c2-ea158af33ead" />
+
+## Страница фильма (вид от лица админа)
+
+<img width="1847" height="943" alt="image" src="https://github.com/user-attachments/assets/347818cf-13ed-4469-b6f4-9c98b895dd46" />
+
+## Страница с плеером
+
+<img width="1829" height="843" alt="image" src="https://github.com/user-attachments/assets/cdc5880b-e03f-481d-8f0d-5209d131d4c8" />
+
+## Добавление фильма (доступно только админам)
+
+<img width="715" height="989" alt="image" src="https://github.com/user-attachments/assets/60b4421e-04ec-47c2-a783-3f217e1e2454" />
+
+## Редактирование фильма (доступно тольок админам)
+
+<img width="1832" height="1007" alt="image" src="https://github.com/user-attachments/assets/0cb5d72d-0404-495d-ade6-a1777bac8621" />
+
+## Авторизация
+
+<img width="550" height="287" alt="image" src="https://github.com/user-attachments/assets/38f7b698-2da7-4da0-9011-45dacbe114dc" />/
+
+## Регистрация
+
+<img width="492" height="465" alt="image" src="https://github.com/user-attachments/assets/725d3de6-f406-45d4-93f3-6f4fae2a342b" />
+
+
+
+
 
 
 
