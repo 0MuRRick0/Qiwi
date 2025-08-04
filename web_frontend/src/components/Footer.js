@@ -4,7 +4,7 @@ import styles from '../index.css'
 function Footer() {
   return (
     <footer className="footer">
-      <p>© 2023 Qiwi. All rights reserved hehe.</p>
+      <p>© 2023 Qiwi. Все права защищены, хехе.</p>
     </footer>
   );
 }

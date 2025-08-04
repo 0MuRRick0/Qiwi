@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -10,11 +9,9 @@ function AddMoviePage() {
   const { user, fetchUserPrivileges } = useAuth();
   const [formData, setFormData] = useState({
     title: '',
-    
     release_date: '', 
     genres: [] 
   });
-  
   
   const [availableGenres, setAvailableGenres] = useState([]); 
   const [loadingGenres, setLoadingGenres] = useState(false); 
@@ -26,7 +23,6 @@ function AddMoviePage() {
   const [isStaff, setIsStaff] = useState(false);
   const [checkingPrivileges, setCheckingPrivileges] = useState(true);
 
-  
   useEffect(() => {
     const checkPrivileges = async () => {
       setCheckingPrivileges(true);
@@ -46,7 +42,6 @@ function AddMoviePage() {
     checkPrivileges();
   }, [user, fetchUserPrivileges]); 
 
-  
   useEffect(() => {
     const loadGenres = async () => {
       if (!isStaff) return; 
@@ -54,7 +49,6 @@ function AddMoviePage() {
       setErrorGenres('');
       try {
         const response = await getAllGenres();
-        
         setAvailableGenres(Array.isArray(response.data) ? response.data : []);
       } catch (err) {
         console.error("Ошибка загрузки жанров:", err);
@@ -76,7 +70,6 @@ function AddMoviePage() {
     }));
   };
 
-  
   const handleGenreChange = (e) => {
     const selectedOptions = Array.from(e.target.selectedOptions, option => parseInt(option.value, 10));
     setFormData(prev => ({
@@ -85,11 +78,19 @@ function AddMoviePage() {
     }));
   };
 
-  
   const handleGenreAdded = (newGenre) => {
-    
     setAvailableGenres(prevGenres => [...prevGenres, newGenre]);
+  };
+
+  const handleGenreDeleted = (deletedGenreId) => {
+    setAvailableGenres(prevGenres => 
+      prevGenres.filter(genre => genre.id !== deletedGenreId)
+    );
     
+    setFormData(prev => ({
+      ...prev,
+      genres: prev.genres.filter(id => id !== deletedGenreId)
+    }));
   };
 
   const handleSubmit = async (e) => {
@@ -102,11 +103,8 @@ function AddMoviePage() {
     setError('');
     setSuccess(false);
     try {
-      
-      
       let formattedDate = formData.release_date;
       if (formattedDate && formattedDate.includes('T')) {
-         
          formattedDate = formData.release_date.split('T')[0];
       }
       
@@ -118,15 +116,12 @@ function AddMoviePage() {
 
       await createMovie(movieDataToSend); 
       setSuccess(true);
-      
       setFormData({ title: '', release_date: '', genres: [] }); 
     } catch (err) {
       console.error("Ошибка добавления фильма:", err);
       
       if (err.response) {
-        
         if (err.response.data) {
-            
             const fieldErrors = [];
             for (const [field, messages] of Object.entries(err.response.data)) {
                 if (Array.isArray(messages)) {
@@ -138,17 +133,14 @@ function AddMoviePage() {
             if (fieldErrors.length > 0) {
                 setError(fieldErrors.join('; '));
             } else {
-                
                 setError(err.response?.data?.detail || 'Ошибка при добавлении фильма');
             }
         } else {
             setError('Ошибка при добавлении фильма');
         }
       } else if (err.request) {
-        
         setError('Нет ответа от сервера. Проверьте соединение.');
       } else {
-        
         setError('Ошибка запроса: ' + err.message);
       }
     } finally {
@@ -228,10 +220,13 @@ function AddMoviePage() {
         </button>
       </form>
 
-      {}
       <div className="admin-section">
         <h3>Управление жанрами</h3>
-        <GenreManagement onGenreAdded={handleGenreAdded} />
+        <GenreManagement 
+          onGenreAdded={handleGenreAdded}
+          onGenreDeleted={handleGenreDeleted}
+          genres={availableGenres}
+        />
       </div>
     </div>
   );

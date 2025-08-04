@@ -151,6 +151,17 @@ function AdminEditMovie() {
     setFormData(prev => ({ ...prev, genres: selectedOptions }));
   };
 
+  const handleGenreDeleted = (deletedGenreId) => {
+    setAvailableGenres(prevGenres => 
+      prevGenres.filter(genre => genre.id !== deletedGenreId)
+    );
+  
+    setFormData(prev => ({
+      ...prev,
+      genres: prev.genres.filter(id => id !== deletedGenreId)
+    }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!isStaff || !movie) {
@@ -469,7 +480,11 @@ function AdminEditMovie() {
         {isStaff && (
           <div className="genre-management-section">
             <h2>Управление жанрами</h2>
-            <GenreManagement onGenreAdded={handleGenreAdded} />
+            <GenreManagement 
+              onGenreAdded={handleGenreAdded}
+              onGenreDeleted={handleGenreDeleted}
+              genres={availableGenres}
+            />
           </div>
         )}
 

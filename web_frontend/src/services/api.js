@@ -1,7 +1,7 @@
 
 import axios from 'axios';
 
-import { jwtDecode } from 'jwt-decode'; 
+import { jwtDecode } from 'jwt-decode';
 
 const API_BASE = '/api';
 
@@ -35,11 +35,11 @@ apiClient.interceptors.response.use(
       try {
         const refreshToken = localStorage.getItem('refreshToken');
         if (!refreshToken) {
-          
-             localStorage.removeItem('accessToken');
-             localStorage.removeItem('refreshToken');
-             window.location.href = '/login';
-             return Promise.reject(error);
+
+          localStorage.removeItem('accessToken');
+          localStorage.removeItem('refreshToken');
+          window.location.href = '/login';
+          return Promise.reject(error);
         }
         const { data } = await axios.post(`${API_BASE}/auth/token/refresh/`, { refresh: refreshToken });
         localStorage.setItem('accessToken', data.access);
@@ -61,23 +61,23 @@ apiClient.interceptors.response.use(
 
 export const loginUser = async (email, password) => {
   try {
-    console.log("API: Attempting to login user:", email); 
+    console.log("API: Attempting to login user:", email);
     const res = await apiClient.post('/auth/login/', { email, password });
     const { access, refresh } = res.data;
-    console.log("API: Login successful, tokens received"); 
+    console.log("API: Login successful, tokens received");
     localStorage.setItem('accessToken', access);
     localStorage.setItem('refreshToken', refresh);
 
-    
+
     return {
       success: true,
       data: {
         tokens: { access, refresh }
-        
+
       }
     };
   } catch (error) {
-    console.error("API: Login failed:", error.response?.data || error.message); 
+    console.error("API: Login failed:", error.response?.data || error.message);
     return {
       success: false,
       error: error.response?.data || error.message
@@ -89,26 +89,41 @@ export const registerUser = (email, username, password, password2) => {
   return apiClient.post('/auth/register/', { email, username, password, password2 });
 };
 
-// Эта функция больше не используется для получения базовой инфы о пользователе
-// export const getCurrentUser = () => {
-//   return apiClient.get('/auth/me/'); 
-// };
+
+
+
+
 
 
 export const getUserPrivileges = () => {
-  console.log("API: Fetching user privileges"); 
+  console.log("API: Fetching user privileges");
   return apiClient.get('/auth/privileges/');
 };
 
 export const logoutUser = () => {
-  console.log("API: Logging out user"); 
+  console.log("API: Logging out user");
   localStorage.removeItem('accessToken');
   localStorage.removeItem('refreshToken');
 };
 
-export const getMovies = (page = 1, limit = 20) => {
-  return apiClient.get('/catalog/movies/', { params: { page, limit } }).then(res => Array.isArray(res.data) ? res.data : []);
+export const getMovies = (page = 1, limit = 20, search = '', genres = [], year = '', sort = '') => {
+  const params = new URLSearchParams();
+  
+  if (page > 1) params.append('page', page);
+  if (limit !== 20) params.append('limit', limit);
+  if (search) params.append('search', search);
+  genres.forEach(genre => {
+    if (genre) params.append('genres', genre);
+  });
+  if (year) params.append('year', year);
+  if (sort) params.append('sort', sort);
+
+  const url = `/catalog/movies/?${params.toString()}`;
+  console.log("API: Fetching movies with URL:", url);
+  
+  return apiClient.get(url);
 };
+
 
 export const getMovieById = (id) => {
   return apiClient.get(`/catalog/movies/${id}/`);
@@ -124,7 +139,7 @@ export const createMovie = (movieData) => {
 export const uploadMovieFile = (movieId, fileType, file, onProgress) => {
   const formData = new FormData();
   formData.append('file', file);
-  
+
   return apiClient.post(`/file/upload/${movieId}/${fileType}/`, formData, {
     onUploadProgress: onProgress,
     headers: {
@@ -164,26 +179,16 @@ export const deleteAllFiles = (movieId) => {
 };
 
 export const deleteGenre = async (genreId) => {
-  const token = localStorage.getItem('accessToken');
-  if (!token) {
-    throw new Error('No access token found');
-  }
-  const response = await fetch(`${API_BASE}/api/catalog/genres/${genreId}/delete/`, {
-    method: 'DELETE',
-    headers: {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json',
-    },
-  });
-
-  if (!response.ok) {
+  try {
+    const response = await apiClient.delete(`/catalog/genres/delete/${genreId}/`);
+    return response.data || { message: 'Жанр успешно удален' };
+  } catch (error) {
     let errorMsg = 'Ошибка при удалении жанра';
-    try {
-      const errorData = await response.json();
-      errorMsg = errorData.detail || errorMsg;
-    } catch (e) {
+    if (error.response?.data?.detail) {
+      errorMsg = error.response.data.detail;
+    } else if (error.response?.data?.message) {
+      errorMsg = error.response.data.message;
     }
     throw new Error(errorMsg);
   }
-  return { message: 'Жанр успешно удален' };
 };

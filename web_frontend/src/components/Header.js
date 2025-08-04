@@ -18,7 +18,7 @@ function Header() {
       <nav>
         {user ? (
           <>
-            <span className={styles.navItem}>Hello, {user.data.username}</span>
+            <span className={styles.navItem}>Привет, {user.data.username}!</span>
             <button className={styles.navButton} onClick={handleLogout}>Logout</button>
           </>
         ) : (

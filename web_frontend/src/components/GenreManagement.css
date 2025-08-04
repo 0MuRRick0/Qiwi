@@ -1,0 +1,113 @@
+.genre-management {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.genre-management .form-group {
+  margin-bottom: 15px;
+}
+
+.genre-management label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.genre-management input[type="text"] {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+.genre-management .submit-button,
+.genre-management .delete-button {
+  background-color: #007bff;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.genre-management .submit-button:hover:not(:disabled),
+.genre-management .delete-button:hover:not(:disabled) {
+  background-color: #0056b3;
+}
+
+.genre-management .submit-button:disabled,
+.genre-management .delete-button:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+}
+
+.genre-management .delete-button {
+  background-color: #dc3545;
+  margin-left: 10px;
+}
+
+.genre-management .delete-button:hover:not(:disabled) {
+  background-color: #c82333;
+}
+
+.genre-management .error-message {
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 15px;
+}
+
+.genre-management .success-message {
+  background-color: #d4edda;
+  color: #155724;
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 15px;
+}
+
+.genre-management .existing-genres {
+  margin-top: 30px;
+}
+
+.genre-management .genres-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.genre-management .genre-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+
+.genre-management .genre-name {
+  flex-grow: 1;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  .genre-management {
+    padding: 15px;
+  }
+  
+  .genre-management .genre-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .genre-management .delete-button {
+    margin-left: 0;
+    margin-top: 10px;
+    width: 100%;
+  }
+}

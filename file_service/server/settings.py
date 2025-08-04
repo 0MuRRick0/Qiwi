@@ -8,6 +8,8 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+FILE_UPLOAD_MAX_MEMORY_SIZE = 0
+
 USER_SERVICE_PRIVILEGES_URL = "http://user-service:8000/privileges/"
 
 USER_SERVICE_TIMEOUT = 10
