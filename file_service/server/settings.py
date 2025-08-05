@@ -27,7 +27,7 @@ RABBITMQ_DEFAULT_USER = os.getenv("RABBITMQ_DEFAULT_USER", "guest")
 RABBITMQ_DEFAULT_PASS = os.getenv("RABBITMQ_DEFAULT_PASS", "guest")
 RABBITMQ_QUEUE = os.getenv("RABBITMQ_QUEUE", "video_uploads")
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1,file-service').split(',')
 
 # Application definition
 INSTALLED_APPS = [
