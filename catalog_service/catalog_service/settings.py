@@ -34,6 +34,11 @@ DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
 
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1,catalog-service').split(',')
 
+CORS_ALLOWED_ORIGINS = os.getenv(
+    'CORS_ALLOWED_ORIGINS',
+    'http://localhost:3000,http://127.0.0.1:3000'
+).split(',')
+
 USER_SERVICE_PRIVILEGES_URL = "http://user-service:8000/privileges/"
 
 USER_SERVICE_TIMEOUT = 10

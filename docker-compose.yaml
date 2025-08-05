@@ -61,8 +61,6 @@ services:
       context: ./nginx
       dockerfile: Dockerfile
     container_name: nginx-proxy
-    ports:
-      - "4242:80"
     expose:
       - "80"
     depends_on:
@@ -89,6 +87,7 @@ services:
         condition: service_healthy
     environment:
       ALLOWED_HOSTS: localhost,127.0.0.1,catalog-service
+      CORS_ALLOWED_ORIGINS: "http://localhost:3000"
       DJANGO_SETTINGS_MODULE: catalog_service.settings
       DB_ENGINE: django.db.backends.postgresql
       DB_NAME: catalog_db
@@ -115,6 +114,7 @@ services:
       - "./envies/postgre.env"
     environment:
       ALLOWED_HOSTS: localhost,127.0.0.1,user-service
+      CORS_ALLOWED_ORIGINS: "http://localhost:3000"
       DB_ENGINE: django.db.backends.postgresql
       DB_NAME: user_db
       DB_HOST: postgres
@@ -156,6 +156,7 @@ services:
       - ./envies/rabbit.env
     environment:
       ALLOWED_HOSTS: localhost,127.0.0.1,file-service
+      CORS_ALLOWED_ORIGINS: "http://localhost:3000"
     depends_on:
       - ftp-server
       - rabbitmq

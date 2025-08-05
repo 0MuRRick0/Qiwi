@@ -29,6 +29,12 @@ RABBITMQ_QUEUE = os.getenv("RABBITMQ_QUEUE", "video_uploads")
 
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1,file-service').split(',')
 
+CORS_ALLOWED_ORIGINS = os.getenv(
+    'CORS_ALLOWED_ORIGINS',
+    'http://localhost:3000,http://127.0.0.1:3000'
+).split(',')
+
+
 # Application definition
 INSTALLED_APPS = [
     'corsheaders',
