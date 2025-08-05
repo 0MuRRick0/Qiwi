@@ -6,3 +6,4 @@ python-jose[cryptography]==3.3.0
 pika==1.3.2
 django-storages[ftp]==1.14.2
 ftputil==5.1.0
+django-cors-headers==4.0.0

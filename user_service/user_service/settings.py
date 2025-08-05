@@ -34,23 +34,19 @@ DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1,user-service').split(',')
 
 
-# Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
+    'corsheaders',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
-    # Third-party
+    
     'rest_framework',
-    'corsheaders',
     'rest_framework_simplejwt',
     # 'rest_framework_simplejwt.token_blacklist',
 
-    # Local apps
     'accounts',
 ]
 

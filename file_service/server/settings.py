@@ -31,9 +31,14 @@ ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1,file-service').s
 
 # Application definition
 INSTALLED_APPS = [
-    'django.contrib.contenttypes',  
-    'django.contrib.auth',     
+    'corsheaders',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
     'rest_framework',
+    'uploader',
 ]
 
 MIDDLEWARE = [
