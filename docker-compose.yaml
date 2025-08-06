@@ -49,7 +49,7 @@ services:
     environment:
       FTP_HOST: ftp-server
       LOCAL_PATH: /usr/share/nginx/files
-      SYNC_INTERVAL: "240" # Рекомендуется заключать числовые значения в кавычки для единообразия
+      SYNC_INTERVAL: "240"
     depends_on:
       - ftp-server
     networks:
